@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BKHS Eid Reunion 2026 - Profile Frame Generator</title>
+    <!-- Google Fonts: Poppins for English, Hind Siliguri for Bengali -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fabric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <!-- LottieFiles -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        :root {
+            --bg-body: #0f0a05;
+            --bg-card: rgba(20, 20, 20, 0.4);
+            --primary-blue: #ea580c; /* Using Orange for the primary color */
+            --primary-blue-hover: #c2410c;
+            --primary-green: rgba(55, 65, 81, 0.6); /* Dark gray base */
+            --primary-green-hover: rgba(75, 85, 99, 0.8);
+            --text-dark: #f8fafc;
+            --text-gray: #9ca3af;
+            --info-bg: rgba(255, 255, 255, 0.05);
+            --info-border: #ea580c;
+            --border-radius-card: 24px;
+            --border-radius-btn: 16px;
+            --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.5);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        body {
+            background-color: #0f0a05;
+            background-image: linear-gradient(135deg, #2a1100 0%, #000000 100%);
+            color: var(--text-dark);
+            font-family: 'Poppins', 'Hind Siliguri', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(234, 88, 12, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 30%, rgba(234, 88, 12, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 0, 0, 0.8) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .app-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            max-width: 420px;
+            border-radius: var(--border-radius-card);
+            box-shadow: var(--shadow-soft);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative;
+        }
+
+        /* 1. Header Section */
+        .app-header {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .app-header h1 {
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .app-header p {
+            color: var(--text-gray);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* 2. Instruction Box */
+        .instruction-box {
+            background-color: var(--info-bg);
+            border-left: 4px solid var(--info-border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* 3. Image Editor */
+        .editor-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .canvas-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            transition: var(--transition);
+        }
+
+        .canvas-wrapper.drag-over {
+            border-color: var(--primary-blue);
+            background-color: rgba(234, 88, 12, 0.05);
+        }
+
+        .canvas-wrapper.has-image {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .canvas-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-gray);
+            gap: 12px;
+            cursor: pointer;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .canvas-placeholder:hover {
+            color: var(--primary-blue);
+        }
+
+        .canvas-placeholder i {
+            font-size: 2.5rem;
+            color: #6b7280;
+        }
+
+        .canvas-wrapper:hover .canvas-placeholder i {
+            color: var(--primary-blue);
+        }
+
+        /* 4. Controls Section */
+        .controls-panel {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .slider-labels span:last-child {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.4);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="range"]:disabled::-webkit-slider-thumb {
+            background: #4b5563;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* 5. Buttons */
+        .buttons-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 14px 20px;
+            border-radius: var(--border-radius-btn);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            transition: var(--transition);
+            color: white;
+            font-family: inherit;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .btn-upload {
+            background: linear-gradient(270deg, #ea580c, #f97316, #fb923c, #ea580c);
+            background-size: 300% 300%;
+            animation: gradientMove 3s ease infinite;
+            box-shadow: 0 8px 25px rgba(234, 88, 12, 0.4);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(234, 88, 12, 0.6);
+        }
+
+        .btn-download {
+            background: linear-gradient(270deg, #374151, #4b5563, #6b7280, #374151);
+            background-size: 300% 300%;
+            animation: gradientMove 4s ease infinite;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .btn-download:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* 6. Footer */
+        .app-footer {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-label {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .footer-org {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .footer-developer {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .footer-developer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 600;
+        }
+
+        .footer-developer a:hover {
+            color: var(--primary-blue-hover);
+            text-decoration: underline;
+        }
+
+        /* Loading Spinner Overlay */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 1. Header -->
+        <header class="app-header">
+            <h1>চকরিয়া সরকারি উচ্চ বিদ্যালয়<br>ঈদ পূর্নমিলনী - 20২৬</h1>
+            <p>PROFILE FRAME GENERATOR</p>
+        </header>
+
+        <!-- 3. Image Editor -->
+        <main class="editor-section">
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <div class="canvas-placeholder" id="canvasPlaceholder">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: #ea580c; margin-bottom: 8px;"></i>
+                </div>
+                <canvas id="canvas"></canvas>
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <!-- 4. Controls Section -->
+            <div class="controls-panel">
+                <div class="frame-selector" style="display: flex; flex-direction: column; gap: 8px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-dark);">ফ্রেম নির্বাচন করুন</span>
+                    <div style="display: flex; gap: 10px;">
+                        <img src="image-frame-.png" class="frame-option active" data-frame="image-frame-.png" style="width: 60px; height: 60px; border-radius: 8px; border: 2px solid var(--primary-blue); cursor: pointer; object-fit: cover;">
+                        <img src="image-frame2.png" class="frame-option" data-frame="image-frame2.png" style="width: 60px; height: 60px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; object-fit: cover;">
+                    </div>
+                </div>
+
+                <div class="slider-group">
+                    <div class="slider-labels">
+                        <span><i class="fa-solid fa-magnifying-glass" style="margin-right: 5px;"></i> জুম কন্ট্রোল</span>
+                        <span>জুম বাড়ান</span>
+                    </div>
+                    <input type="range" id="zoomSlider" min="0.1" max="3" step="0.01" value="1" disabled>
+                </div>
+
+                <!-- 5. Buttons -->
+                <div class="buttons-group">
+                    <button class="btn btn-upload" id="uploadBtnProxy">
+                        ছবি আপলোড দিন
+                    </button>
+                    <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/jpg, image/webp">
+                    
+                    <button class="btn btn-download" id="downloadBtn" disabled>
+                        ফ্রেমসহ সেভ করুন
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 6. Footer -->
+        <footer class="app-footer">
+            <p class="footer-label">DEVELOPED FOR</p>
+            <p class="footer-org">চকরিয়া সরকারি উচ্চ বিদ্যালয় প্রাক্তন ছাত্রছাত্রী সংসদ</p>
+            <p class="footer-developer">
+                <a href="https://www.google.com/search?sca_esv=0c88d25d31adaebc&sxsrf=ANbL-n6mb86ZXkz7yhH01ZICMklVjRDQ_g%3A1777094423229&q=Meharujjaman%20Sowrav&stick=H4sIAAAAAAAAAONgU1I1qDA2SEwxSElMNbQ0TzVKtDS2MqgwSTayMElJNTMyNEozMDAzWsQq7JuakVhUmpWVmJuYpxCcX16UWAYAyXF6lD8AAAA&mat=CWoezgAhaJb7&ved=2ahUKEwiQs9DOoIiUAxVrzjgGHU3LCVQQrMcEegQIFhAC" target="_blank" rel="noopener noreferrer">Developed by Sowrav</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const UPLOAD_INPUT = document.getElementById('imageUpload');
+        const UPLOAD_BTN_PROXY = document.getElementById('uploadBtnProxy');
+        const ZOOM_SLIDER = document.getElementById('zoomSlider');
+        const DOWNLOAD_BTN = document.getElementById('downloadBtn');
+        const CANVAS_WRAPPER = document.getElementById('canvasWrapper');
+        const CANVAS_PLACEHOLDER = document.getElementById('canvasPlaceholder');
+        const LOADING_OVERLAY = document.getElementById('loadingOverlay');
+
+        // Dynamic Canvas Size for Mobile-First Card Layout
+        // The container padding is 24px on each side. Max width is 420px.
+        // Canvas width should match its wrapper's clientWidth.
+        let canvasSize = 300; // Default fallback
+        
+        function initCanvasSize() {
+            // Get actual width of the wrapper
+            const wrapperWidth = CANVAS_WRAPPER.clientWidth;
+            if(wrapperWidth > 0) {
+                canvasSize = wrapperWidth;
+            }
+        }
+
+        // Initialize Fabric.js
+        let canvas;
+        let userImageObj = null;
+        let frameImageObj = null;
+        // The frame image provided in previous steps
+        let currentFrameUrl = 'image-frame-.png'; 
+
+        function initFabric() {
+            initCanvasSize();
+            canvas = new fabric.Canvas('canvas', {
+                width: canvasSize,
+                height: canvasSize,
+                preserveObjectStacking: true,
+                selection: false
+            });
+            loadFrame(currentFrameUrl);
+
+            // Sync slider with canvas controls
+            canvas.on('object:scaling', function(e) {
+                if(e.target === userImageObj) {
+                    ZOOM_SLIDER.value = userImageObj.scaleX;
+                }
+            });
+            
+            canvas.on('mouse:down', function() {
+                if(userImageObj) {
+                    canvas.setActiveObject(userImageObj);
+                }
+            });
+        }
+
+        function showLoading() { LOADING_OVERLAY.classList.add('active'); }
+        function hideLoading() { LOADING_OVERLAY.classList.remove('active'); }
+
+        function enableControls() {
+            ZOOM_SLIDER.disabled = false;
+            DOWNLOAD_BTN.disabled = false;
+            CANVAS_PLACEHOLDER.style.display = 'none';
+            CANVAS_WRAPPER.classList.add('has-image');
+            UPLOAD_BTN_PROXY.innerHTML = 'ছবি পরিবর্তন করুন';
+        }
+
+        // Load Frame
+        function loadFrame(url) {
+            showLoading();
+            if(frameImageObj) {
+                canvas.remove(frameImageObj);
+            }
+            
+            fabric.Image.fromURL(url, function(img) {
+                frameImageObj = img;
+                
+                // Scale frame to fit exact canvas size
+                img.set({
+                    scaleX: canvasSize / img.width,
+                    scaleY: canvasSize / img.height
+                });
+                
+                img.set({
+                    left: canvasSize / 2,
+                    top: canvasSize / 2,
+                    originX: 'center',
+                    originY: 'center',
+                    selectable: false,
+                    evented: false,
+                    hoverCursor: 'default'
+                });
+                
+                // Dynamically make white color transparent as requested by user
+                /*
+                const removeWhiteFilter = new fabric.Image.filters.RemoveColor({
+                    color: '#FFFFFF',
+                    distance: 0.15 // 15% tolerance to catch off-white edges
+                });
+                img.filters.push(removeWhiteFilter);
+                img.applyFilters();
+                */
+                
+                canvas.add(img);
+                img.bringToFront();
+                canvas.renderAll();
+                hideLoading();
+            }, { crossOrigin: 'anonymous' });
+        }
+
+        // Trigger file input
+        UPLOAD_BTN_PROXY.addEventListener('click', () => {
+            UPLOAD_INPUT.click();
+        });
+
+        // Click on placeholder to upload
+        CANVAS_PLACEHOLDER.addEventListener('click', () => {
+            UPLOAD_INPUT.click();
+        });
+
+        // Handle Image Upload
+        UPLOAD_INPUT.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            handleFile(file);
+            e.target.value = ''; // Reset input
+        });
+
+        function handleFile(file) {
+            if(!file || !file.type.startsWith('image/')) return;
+            
+            showLoading();
+            const reader = new FileReader();
+            reader.onload = function(f) {
+                const data = f.target.result;
+                fabric.Image.fromURL(data, function(img) {
+                    if(userImageObj) {
+                        canvas.remove(userImageObj);
+                    }
+                    userImageObj = img;
+
+                    // Calculate scales
+                    const scaleToFit = Math.min(canvasSize / img.width, canvasSize / img.height);
+                    const scaleToCover = Math.max(canvasSize / img.width, canvasSize / img.height);
+                    
+                    img.set({
+                        scaleX: scaleToCover,
+                        scaleY: scaleToCover,
+                        left: canvasSize / 2,
+                        top: canvasSize / 2,
+                        originX: 'center',
+                        originY: 'center',
+                        cornerColor: '#2563eb',
+                        cornerStrokeColor: '#fff',
+                        cornerStyle: 'circle',
+                        transparentCorners: false,
+                        borderColor: '#2563eb',
+                        borderDashArray: [4, 4],
+                        padding: 10
+                    });
+                    
+                    // Disable rotation and stretching via corner controls
+                    img.setControlsVisibility({
+                        mt: false, mb: false, ml: false, mr: false,
+                        mtr: false
+                    });
+
+                    canvas.add(img);
+                    img.sendToBack(); 
+                    if(frameImageObj) frameImageObj.bringToFront();
+                    
+                    canvas.setActiveObject(img);
+                    
+                    // Setup slider
+                    ZOOM_SLIDER.min = scaleToFit * 0.2;
+                    ZOOM_SLIDER.max = scaleToCover * 4;
+                    ZOOM_SLIDER.step = 0.01;
+                    ZOOM_SLIDER.value = scaleToCover;
+                    
+                    enableControls();
+                    canvas.renderAll();
+                    hideLoading();
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Zoom Slider update
+        ZOOM_SLIDER.addEventListener('input', function() {
+            if(userImageObj) {
+                const val = parseFloat(this.value);
+                userImageObj.scale(val);
+                canvas.renderAll();
+            }
+        });
+
+        // Download PNG
+        DOWNLOAD_BTN.addEventListener('click', function() {
+            if(!userImageObj && !frameImageObj) return;
+            
+            showLoading();
+            setTimeout(() => {
+                canvas.discardActiveObject();
+                canvas.renderAll();
+
+                // High quality output: scale output to 1080px resolution
+                const multiplier = 1080 / canvasSize; 
+                const dataURL = canvas.toDataURL({
+                    format: 'png',
+                    quality: 1,
+                    multiplier: multiplier
+                });
+
+                const link = document.createElement('a');
+                link.download = 'bkhs-eid-reunion-frame.png';
+                link.href = dataURL;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                hideLoading();
+            }, 100);
+        });
+
+        // Drag & Drop Functionality
+        CANVAS_WRAPPER.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if(!userImageObj) {
+                CANVAS_WRAPPER.classList.add('drag-over');
+            }
+        });
+        
+        CANVAS_WRAPPER.addEventListener('dragleave', () => {
+            CANVAS_WRAPPER.classList.remove('drag-over');
+        });
+        
+        CANVAS_WRAPPER.addEventListener('drop', (e) => {
+            e.preventDefault();
+            CANVAS_WRAPPER.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        // Frame Selection Logic
+        const frameOptions = document.querySelectorAll('.frame-option');
+        frameOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                frameOptions.forEach(opt => opt.style.borderColor = 'transparent');
+                this.style.borderColor = 'var(--primary-blue)';
+                currentFrameUrl = this.getAttribute('data-frame');
+                loadFrame(currentFrameUrl);
+            });
+        });
+
+        // Init after DOM load
+        window.onload = () => {
+            // Slight delay to ensure wrapper width is computed by browser
+            setTimeout(initFabric, 50);
+        };
+    </script>
+</body>
+</html>
